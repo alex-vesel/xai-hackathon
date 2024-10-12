@@ -3,19 +3,20 @@ import ForceGraph from './forcegraph';
 import './index.css';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
 import ChatSidebar from './components/ChatSidebar';
-// import TweetEmbed from './components/tweetembed';
+import { useState } from 'react';
+import TweetInput from './components/TweetInput'; // Import the new component
 
-// Axios Endpoint for machine learning
 function App() {
+  const [tweetId, setTweetId] = useState('');
+
   return (
     <div className="App">
-      <h1>Simple D3 Force-Directed Graph</h1>
+      <TweetInput setTweetId={setTweetId} /> {/* Use the new component */}
+      <h1 style={{ color: 'white' }}>A Hitchhiker's Guide to X</h1>
       <ForceGraph width={600} height={400} />
       {/* <TwitterTweetEmbed tweetId="1845200940468416998" options={{ theme: 'dark' }} /> */}
       <ChatSidebar />
-      {/* <TweetEmbed tweetId="1845200940468416998" width={500} height={2} /> */}
     </div>
-
   );
 }
 

@@ -3,6 +3,7 @@
     height: 80vh;
     background-color: black;
     border: 1px solid #cccccccd;
+    border-radius: 10px; /* Added border-radius */
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -10,37 +11,52 @@
     top: 10vh;
     overflow-y: auto;
     font-family: 'Arial', sans-serif;
+    font-weight: bold; /* Make font bold */
 }
 
 .chat-messages {
     flex: 1;
     padding: 10px;
     overflow-y: auto;
+    font-weight: bold; /* Make font bold */
 }
-
 .chat-message {
     margin-bottom: 10px;
     padding: 8px;
     border-radius: 5px;
-    max-width: 50%;
+    max-width: 60%;
+    font-weight: bold; /* Make font bold */
 }
-
 .chat-message.user {
-    background-color: #d1e7dd;
+    background-color: #000000;
+    color: white;
     align-self: flex-end;
-    text-align: right;
+    text-align: left;
+    margin-left: auto;
+    border: 1px solid #007bff; /* Given border color for user messages */
+    border-radius: 10px; /* Added border-radius */
+    width: fit-content;
+    font-weight: bold; /* Make font bold */
 }
 
 .chat-message.llm {
-    background-color: #f8d7da;
+    background-color: #000000;
+    color: white;
     align-self: flex-start;
     text-align: left;
+    margin-right: auto;
+    border: 1px solid #ff4500; /* Given border color for LLM messages */
+    border-radius: 10px; /* Added border-radius */
+    width: fit-content;
+    font-weight: bold; /* Make font bold */
 }
 
 .chat-input {
     display: flex;
     padding: 10px;
     border-top: 1px solid #ccc;
+    border-radius: 10px; /* Added border-radius */
+    font-weight: bold; /* Make font bold */
 }
 
 .chat-input input {
@@ -49,6 +65,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-right: 5px;
+    font-weight: bold; /* Make font bold */
 }
 
 .chat-input button {
@@ -58,8 +75,20 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-weight: bold; /* Make font bold */
+}
+
+.loading-bar {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
 }
 
 .chat-input button:hover {
     background-color: #0056b3;
+    font-weight: bold; /* Make font bold */
 }
