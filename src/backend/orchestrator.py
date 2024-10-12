@@ -16,8 +16,7 @@ class Orchestrator():
     def build_user_description(self, username):
         recent_tweets = self.x_api.get_user_timeline(username, max_results=100)
         user_summary = self.grok.get_user_summary(recent_tweets)
-
-
+        
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.build_user_description("elonmusk")

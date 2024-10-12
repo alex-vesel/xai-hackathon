@@ -1,9 +1,8 @@
 import xai_embed_api
 import os
 import numpy as np
-from dotenv import load_dotenv
 
-load_dotenv()
+tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
 
 class Node():
     def __init__(self, id, text, url):
@@ -27,7 +26,8 @@ class Graph():
             'weight': weight
         })
     
-    def generate_links(self, api_key, similarity_threshold = 0.5):
+    def generate_links(self, similarity_threshold = 0.5):
+        api_key = os.environ.get("XAI_API_KEY")
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
                 # Generate embeddings for the two nodes
@@ -44,6 +44,13 @@ class Graph():
                         'b': self.nodes[j].id,
                         'weight': similarity
                     })
+
+    def init_from_tweets(self, tweets):
+        for tweet in tweets:
+            n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
+            self.add_node(n)
+        
+        self.generate_links()
 
 if __name__ == "__main__":
     myGraph = Graph()

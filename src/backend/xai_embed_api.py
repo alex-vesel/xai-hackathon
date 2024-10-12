@@ -2,11 +2,8 @@
 
 import os
 import json
-from dotenv import load_dotenv
 import requests
 
-# Load environment variables from the correct path
-load_dotenv()
 
 def get_embedding(api_key, message):
     url = "https://api.x.ai/v1/embeddings"
@@ -26,7 +23,7 @@ def get_embedding(api_key, message):
 
 if __name__ == "__main__":
     # Use get() method to avoid KeyError if the key is not found
-    api_key = os.getenv("XAI_API_KEY")
+    api_key = os.environ.get("XAI_API_KEY")
     if not api_key:
         print("API key not found in environment variables. Please check your .env file.")
         exit()
