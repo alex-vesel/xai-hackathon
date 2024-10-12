@@ -2,19 +2,21 @@
 
 import os
 import json
-from dotenv import load_dotenv
 import requests
 from openai import OpenAI
 
-# Load environment variables from the correct path
-load_dotenv()
 
 GROK_SYSTEM_PROMPT = "You are an AI agent Grok that is a curious assistant who wants to help an X user discover new ideas using the X platform. You are fiercely curious and only want to find the newest ideas possible that no one else has come up with. You are also a super genius who can see things no one else can."
 
+def get_user_summary(user_summary, user_tags):
+    return {
+        "user_summary": user_summary,
+        "user_tags": user_tags,
+    }
 
 functions = {
-    'get_user_summary':
-        {
+    'get_user_summary': {
+        "description": {
             "name": "get_user_summary",
             "description": "Call this function to return a user summary based on a list of tweets.",
             "parameters": {
@@ -36,24 +38,23 @@ functions = {
                 "optional": [],
             },
         },
+        "function": get_user_summary,
+    }
 }
 
-def get_user_summary(user_summary, user_tags):
-    return {
-        "user_summary": user_summary,
-        "user_tags": user_tags,
-    }
 
 class GrokInterface():
     def __init__(self):
-        self.api_key = os.getenv("XAI_API_KEY")
+        self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("API key not found in environment variables. Please check your secrets.env file.")
         self.client = OpenAI(
             api_key=self.api_key,
-            base_url="https://api.x.ai/v1",
+            # base_url="https://api.x.ai/v1",
+            base_url="https://api.openai.com/v1"
         )
-        self.model_name = "grok-2-public"
+        # self.model_name = "grok-2-public"
+        self.model_name = "gpt-3.5-turbo"
         self.conversation =  [{"role": "system", "content": GROK_SYSTEM_PROMPT}]
 
 
@@ -71,16 +72,24 @@ class GrokInterface():
 
     def create_chat_completion(self, input, tools=None):
         self.add_user_message(input)
-        import IPython; IPython.embed(); exit(0)
+
         response = self.client.chat.completions.create(
             messages=self.conversation,
             model=self.model_name,
             tools=tools,
             stream=False,
         )
-        response_text = response.choices[0].message.content
-        self.add_system_message(response_text)
-        return response_text
+        output = {'text': response.choices[0].message.content, 'tools': []}
+        for tool_call in response.choices[0].message.tool_calls:
+            arguments = json.loads(tool_call.function.arguments)
+            function_name = tool_call.function.name
+            function_output = functions[function_name]["function"](**arguments)
+            output['tools'].append({
+                'function': function_name,
+                'output': function_output,
+            })
+        self.add_system_message(output['text'])
+        return output
 
 
     def get_user_summary(self, tweets):
@@ -88,9 +97,12 @@ class GrokInterface():
         for tweet in tweets:
             input += f"Tweet: {tweet}\n\n"
         task_functions = [functions["get_user_summary"]]
-        tools = [{"type": "function", "function": f} for f in task_functions]
+        tools = [{"type": "function", "function": f['description']} for f in task_functions]
         response = self.create_chat_completion(input, tools=tools)
-        import IPython; IPython.embed(); exit(0)
+        for tool in response['tools']:
+            if tool['function'] == "get_user_summary":
+                return tool['output']
+        return None
 
 
     def explore(self, graph):
