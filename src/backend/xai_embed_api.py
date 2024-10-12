@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # Use get() method to avoid KeyError if the key is not found
     api_key = os.getenv("XAI_API_KEY")
     if not api_key:
-        print("API key not found in environment varsdiables. Please check your secrets.env file.")
+        print("API key not found in environment variables. Please check your .env file.")
         exit()
 
     print(get_embedding(api_key, "Hello world"))
