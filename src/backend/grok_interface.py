@@ -61,14 +61,18 @@ class GrokInterface():
     def add_user_message(self, input):
         self.conversation.append({"role": "user", "content": input})
 
+    def del_last_user_message(self):
+        if self.conversation and self.conversation[-1]["role"] == "user":
+            self.conversation.pop()
+
 
     def add_system_message(self, input):
         self.conversation.append({"role": "system", "content": input})
 
 
-    def create_chat_completion(self, input, tools=None):
+    def create_chat_completion(self, input, tools=None, add_system_message=True):
         self.add_user_message(input)
-        import IPython; IPython.embed(); exit(0)
+        # import IPython; IPython.embed(); exit(0)
         response = self.client.chat.completions.create(
             messages=self.conversation,
             model=self.model_name,
@@ -76,7 +80,8 @@ class GrokInterface():
             stream=False,
         )
         response_text = response.choices[0].message.content
-        self.add_system_message(response_text)
+        if add_system_message:
+            self.add_system_message(response_text)
         return response_text
 
 
