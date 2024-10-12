@@ -8,11 +8,6 @@ import requests
 # Load environment variables from the correct path
 load_dotenv()
 
-def get_neighbor_nodes(node_id):
-    
-
-def click(html, button):
-    pass
 
 def create_chat_completion(api_key, messages):
     url = "https://api.x.ai/v1/chat/completions"
