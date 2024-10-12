@@ -13,9 +13,9 @@ function App() {
     <div className="App">
       <TweetInput setTweetId={setTweetId} /> {/* Use the new component */}
       <h1 style={{ color: 'white' }}>A Hitchhiker's Guide to X</h1>
-      <div style={{ display: 'flex', border: '2px solid white', padding: '10px' }}>
-        <div style={{ flex: 1 }}>
-          <ForceGraph width={420} height={620} />
+      <div style={{ display: 'flex'}}>
+        <div style={{ flex: 3 , border: '2px solid white', padding: '10px'}}>
+          <ForceGraph width={800} height={620} />
         </div>
         <div style={{ flex: 1 }}>
           <ChatSidebar />
