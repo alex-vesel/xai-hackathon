@@ -61,15 +61,11 @@ class Orchestrator():
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
 
-
-    def get_similar_tweets_from_id(self, tweet_id):
-        pass
-
     def explore(self):
         # allow grok to explore the graph
         self.grok.explore(self.graph)
 
-    def get_similar_tweets(self, tweet_id, max_results=100):
+    def get_similar_tweets_from_id(self, tweet_id, max_results=100):
         """
         Get tweets similar to a specific tweet.
         """
@@ -92,10 +88,10 @@ class Orchestrator():
         
         # ask grok for keyword search
         count_iters = 0
-        tweets = "blank"
-        while count_iters < 10 and tweets != None:
+        tweets = None
+        while count_iters < 10 and tweets is None:
             self.similar_tweets_grok.add_system_message("The previous query failed. Make the search prompt shorter and simpler. The new search prompt must be shorter than the previous query. Delete keywords as necessary.")
-            response = self.similar_tweets_grok.create_chat_completion(original_text, add_system_message=True)
+            response = self.similar_tweets_grok.create_chat_completion(original_text)['text']
             self.similar_tweets_grok.del_last_user_message()
             print("Query:", response)
             
@@ -105,14 +101,21 @@ class Orchestrator():
             
             try:
                 tweets = self.x_api.get_tweets_from_query(cleaned_response, max_results=max_results)
+                if tweets is not None:
+                    break
             except Exception as e:
                 print(f"Error: {e}")
+                tweets = None
             count_iters += 1
 
-        tweets_data = [tweet for tweet in tweets.data if tweet["id"] != tweet_id]
+        if tweets is None:
+            return []
+
+        tweets_data = [tweet for tweet in tweets if tweet.id != tweet_id]
         return tweets_data[:10]
 
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
     orchestrator.synthesize()
+    print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
