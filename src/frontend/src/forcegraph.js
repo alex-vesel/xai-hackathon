@@ -2,6 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
 import data from './data.json';
+import useScript from './useScript';
 
 const ForceGraph = ({ width = 928, height = 600 }) => {
   const svgRef = useRef();
@@ -18,7 +19,15 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
   const svgSelectionRef = useRef();
   const colorRef = useRef();
 
+  // Add a ref for the tooltip
+  const tooltipRef = useRef();
+
+  // Use the custom useScript hook to load Twitter widgets
+  useScript('https://platform.twitter.com/widgets.js');
+
   useEffect(() => {
+    // Remove the script loading code since we're using useScript now
+
     // Initialize color scale
     colorRef.current = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -102,7 +111,7 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
     linkSelection.exit().remove();
 
     const linkEnter = linkSelection.enter().append("line")
-      .attr("stroke-width", d => Math.sqrt(d.value));
+      .attr("stroke-width", d => Math.sqrt(d.value || 1));
 
     linkSelection = linkEnter.merge(linkSelection);
 
@@ -112,7 +121,7 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
 
     const nodeEnter = nodeSelection.enter().append("circle")
       .attr("r", 5)
-      .attr("fill", d => color(d.group))
+      .attr("fill", d => color(d.group || 1))
       .call(d3.drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -160,10 +169,13 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
 
     linkSelection
       .attr("stroke", l => (l.source === d || l.target === d) ? '#000' : '#999')
-      .attr("stroke-width", l => (l.source === d || l.target === d) ? 3 : Math.sqrt(l.value));
+      .attr("stroke-width", l => (l.source === d || l.target === d) ? 3 : Math.sqrt(l.value || 1));
 
     nodeSelection
-      .attr("fill", n => (links.some(l => (l.source === n && l.target === d) || (l.source === d && l.target === n))) ? '#000' : color(n.group));
+      .attr("fill", n => (links.some(l => (l.source === n && l.target === d) || (l.source === d && l.target === n))) ? '#000' : color(n.group || 1));
+
+    // Show tooltip with embedded tweet
+    showTooltip(event, d);
   }
 
   function mouseoutNode(event, d) {
@@ -173,9 +185,12 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
 
     d3.select(event.currentTarget).attr('stroke', '#fff').attr('stroke-width', 1.5);
 
-    linkSelection.attr("stroke", "#999").attr("stroke-width", d => Math.sqrt(d.value));
+    linkSelection.attr("stroke", "#999").attr("stroke-width", d => Math.sqrt(d.value || 1));
 
-    nodeSelection.attr("fill", d => color(d.group));
+    nodeSelection.attr("fill", d => color(d.group || 1));
+
+    // Hide tooltip
+    hideTooltip();
   }
 
   function getAdditionalNodes(d) {
@@ -183,7 +198,12 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
     newNodeCounterRef.current++;
 
     // Return a new node with a unique ID
-    const newNode = { id: `om_${newNodeCounterRef.current}`, group: d.group };
+    const newNode = {
+      id: `om_${newNodeCounterRef.current}`,
+      group: d.group || 1,
+      tweet: d.tweet, // You may need to adjust this based on your actual data
+      url: d.url
+    };
     return [newNode];
   }
 
@@ -297,10 +317,53 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
     linkSelection.style("opacity", 1);
   }
 
+  // Function to show tooltip with embedded tweet
+  function showTooltip(event, d) {
+    const tooltip = tooltipRef.current;
+
+    // Clear previous content
+    tooltip.innerHTML = '';
+
+    // Set the innerHTML to the node's tweet HTML
+    tooltip.innerHTML = d.tweet;
+
+    // Position the tooltip
+    const [x, y] = d3.pointer(event, svgRef.current);
+    tooltip.style.left = `${x + 20}px`;
+    tooltip.style.top = `${y + 20}px`;
+    tooltip.style.display = 'block';
+
+    // Load the tweet
+    if (window.twttr && window.twttr.widgets) {
+      window.twttr.widgets.load(tooltip);
+    }
+  }
+
+  // Function to hide tooltip
+  function hideTooltip() {
+    const tooltip = tooltipRef.current;
+    tooltip.style.display = 'none';
+  }
+
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <button onClick={handleBacktrack}>Backtrack</button>
       <svg ref={svgRef}></svg>
+      {/* Tooltip div */}
+      <div
+        ref={tooltipRef}
+        style={{
+          position: 'absolute',
+          display: 'none',
+          pointerEvents: 'none',
+          backgroundColor: '#fff',
+          border: '1px solid #ccc',
+          padding: '10px',
+          borderRadius: '4px',
+          zIndex: 10,
+          maxWidth: '350px',
+        }}
+      ></div>
     </div>
   );
 };
