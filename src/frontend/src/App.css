@@ -2,6 +2,20 @@
   text-align: center;
 }
 
+.tweet-container iframe {
+  display: block;
+}
+
+/* Hides the Like, Retweet, and Reply buttons */
+.tweet-container iframe {
+  pointer-events: none; /* Disables interactions */
+}
+
+/* Hide specific buttons */
+.twitter-tweet-rendered .EmbeddedTweet-action {
+  display: none !important;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
