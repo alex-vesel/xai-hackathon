@@ -23,9 +23,11 @@ def jsonify_tweet_list(tweets):
     return jsonify([{"id": tweet.id, "text": tweet.text, "url": tweet_id_to_url(tweet.id)} for tweet in tweets])
 
 @app.route('/tweets_from_category')
-def chat():
+def tweets_from_category():
     tweets = x_api.get_tweets_from_category(request.args.get('category'))
     return jsonify_tweet_list(tweets)
+
+
 
 
 if __name__ == '__main__':
