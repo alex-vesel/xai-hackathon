@@ -217,6 +217,15 @@ class GrokInterface():
         
 
 
+    def explore(self, graph):
+        # Given the entire graph of X, pick 5 ids to expand and add to the graph
+        input = "You are going to receive a graph of X. Please explore the graph and pick 5 ids to expand and add to the graph.\n"
+        graph_text = graph.to_grok_prompt()
+        input += graph_text
+        response = self.create_chat_completion(input)
+        
+
+
 if __name__ == "__main__":
     # Use get() method to avoid KeyError if the key is not found
     grok_interface = GrokInterface()

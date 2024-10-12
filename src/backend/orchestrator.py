@@ -64,6 +64,10 @@ class Orchestrator():
     def get_similar_tweets_from_id(self, tweet_id):
         pass
 
+    def explore(self):
+        # allow grok to explore the graph
+        self.grok.explore(self.graph)
+
 
 if __name__ == "__main__":
     orchestrator = Orchestrator()
