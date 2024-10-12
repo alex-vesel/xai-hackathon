@@ -27,7 +27,7 @@ class XAPI:
         """
         query = f"#{category} -is:retweet"
         tweets = self.client.search_recent_tweets(query=query, max_results=max_results)
-        return tweets
+        return tweets.data
 
     def start_stream(self, track_list):
         """
@@ -60,7 +60,7 @@ class XAPI:
         user = self.client.get_user(username=username)
         if user.data:
             tweets = self.client.get_users_tweets(user.data.id, max_results=max_results)
-            return tweets
+            return tweets.data
         return []
 
     def get_replies(self, tweet_id, max_results=100):
@@ -69,7 +69,7 @@ class XAPI:
         """
         query = f"conversation_id:{tweet_id} is:reply"
         tweets = self.client.search_recent_tweets(query=query, max_results=max_results)
-        return tweets
+        return tweets.data
 
 
 # Example usage:
