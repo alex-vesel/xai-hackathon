@@ -16,7 +16,7 @@ function TweetInput({ setTweetId }) {
       setTweetId('');
     }
     try {
-      const tweets = await fetchTweetsFromCategory('someCategory'); // Replace 'someCategory' with actual category
+      const tweets = await fetchTweetsFromCategory(inputValue); // Replace 'someCategory' with actual category
       console.log(tweets);
     } catch (error) {
       console.error('Error fetching tweets:', error);
