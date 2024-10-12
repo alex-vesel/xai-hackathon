@@ -36,6 +36,12 @@ def init_user_graph():
     return jsonify(graph_json)
 
 
+@app.route('/synthesize')
+def synthesize():
+    output = orchestrator.synthesize()
+    return jsonify(output)
+
+
 
 
 if __name__ == '__main__':

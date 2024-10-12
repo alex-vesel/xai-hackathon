@@ -60,6 +60,7 @@ class Orchestrator():
     def synthesize(self):
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
+        return output
 
     def explore(self):
         # allow grok to explore the graph
