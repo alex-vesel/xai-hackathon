@@ -6,7 +6,7 @@ import json
 from dotenv import load_dotenv
 import openai
 import os
-from x_api import XAPI
+from orchestrator import Orchestrator
 app = Flask(__name__)
 # pip install python-dotenv
 
@@ -17,15 +17,23 @@ load_dotenv(dotenv_path=os.path.join(dir, '../secrets.env'))
 tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
 
 # Global vars
-x_api = XAPI()
+orchestrator = Orchestrator()
 
 def jsonify_tweet_list(tweets):
     return jsonify([{"id": tweet.id, "text": tweet.text, "url": tweet_id_to_url(tweet.id)} for tweet in tweets])
 
+
 @app.route('/tweets_from_category')
 def tweets_from_category():
-    tweets = x_api.get_tweets_from_category(request.args.get('category'))
+    tweets = orchestrator.x_api.get_tweets_from_category(request.args.get('category'))
     return jsonify_tweet_list(tweets)
+
+
+@app.route('/init_user_graph')
+def init_user_graph():
+    graph = orchestrator.init_user_graph(request.args.get('username'))
+    graph_json = graph.to_server_format()
+    return jsonify(graph_json)
 
 
 
