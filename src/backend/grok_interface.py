@@ -74,7 +74,7 @@ class GrokInterface():
         self.conversation.append({"role": "system", "content": input})
 
 
-    def create_chat_completion(self, input, tools=None, add_system_message=True):
+    def create_chat_completion(self, input, tools=None):
         self.add_user_message(input)
 
         response = self.client.chat.completions.create(

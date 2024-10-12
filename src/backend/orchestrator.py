@@ -12,6 +12,7 @@ class Orchestrator():
     def __init__(self):
         self.graph = Graph()
         self.grok = GrokInterface()
+        self.similar_tweets_grok = GrokInterface()
         self.x_api = XAPI()
         self.user = None
 
@@ -43,7 +44,50 @@ class Orchestrator():
         # allow grok to explore the graph
         self.grok.explore(self.graph)
 
+    def get_similar_tweets(self, tweet_id, max_results=100):
+        """
+        Get tweets similar to a specific tweet.
+        """
+        # Reset the similar_tweets_grok chat history
+        self.similar_tweets_grok.clear_chat()
+        self.similar_tweets_grok.add_system_message("""
+            Your job is to make a short-length, specific search prompt that will be inputted into Twitter/X's search bar. 
+            Do not use special markers such as '-inurl' 'site:' or 'high-resolution' or special characters; simply make it a natural language query. 
+            Do not begin the prompt with Here's a search prompt... Just answer with the text of the search prompt. 
+            The prompt needs to be for similar posts to this post:""")
+
+        # Get the original tweet
+        original_tweet = self.x_api.get_tweet(tweet_id)
+        if not original_tweet.data:
+            return []  # Return empty list if tweet not found
+        
+        # Extract the text from the original tweet
+        original_text = original_tweet.data.text
+        print("Og text:", original_text)
+        
+        # ask grok for keyword search
+        count_iters = 0
+        tweets = "blank"
+        while count_iters < 10 and tweets != None:
+            self.similar_tweets_grok.add_system_message("The previous query failed. Make the search prompt shorter and simpler. The new search prompt must be shorter than the previous query. Delete keywords as necessary.")
+            response = self.similar_tweets_grok.create_chat_completion(original_text, add_system_message=True)
+            self.similar_tweets_grok.del_last_user_message()
+            print("Query:", response)
+            
+            # Remove keywords like 'and', 'in', 'or' from the response
+            keywords_to_remove = ['and', 'in', 'or']
+            cleaned_response = ' '.join([word for word in response.split() if word.lower() not in keywords_to_remove])
+            
+            try:
+                tweets = self.x_api.get_tweets_from_query(cleaned_response, max_results=max_results)
+            except Exception as e:
+                print(f"Error: {e}")
+            count_iters += 1
+
+        tweets_data = [tweet for tweet in tweets.data if tweet["id"] != tweet_id]
+        return tweets_data[:10]
 
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
+    orchestrator.get_similar_tweets("1845200940468416998")
