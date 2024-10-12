@@ -20,7 +20,7 @@ def explore(expand_ids):
         'expand_ids': expand_ids,
     }
 
-def synthesize(user, new_ideas, source_ids):
+def synthesize(new_ideas, source_ids):
     output =[]
     for idea, source_id in zip(new_ideas, source_ids):
         output.append({
@@ -84,7 +84,7 @@ functions = {
     'synthesize': {
         "description": {
             "name": "synthesize",
-            "description": "Call this function to create new ideas based on the user and the graph.",
+            "description": "Call this function to create new ideas based on the user and the graph. Try to combine multiple tweets into one new idea!",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -144,7 +144,11 @@ class GrokInterface():
         self.conversation.append({"role": "system", "content": input})
 
 
-    def create_chat_completion(self, input, tools=None):
+    def create_chat_completion(self, input, tools=None, add_system_message=True):
+        if tools is not None:
+            input += "\nA reminder of your tools:\n"
+            for tool in tools:
+                input += f"Tool: {tool['function']}\n"
         self.add_user_message(input)
 
         response = self.client.chat.completions.create(
@@ -203,13 +207,12 @@ class GrokInterface():
     
 
     def synthesize(self, user, graph):
-        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please call the provided function.\n"
+        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please phrase the ideas as a message to the user in a fun, humourus way! Please call the provided function to add your response.\n"
         input += str(user)
         input += graph.to_grok_prompt()
         task_functions = [functions["synthesize"]]
         tools = [{"type": "function", "function": f['description']} for f in task_functions]
         response = self.create_chat_completion(input, tools=tools)
-        import IPython; IPython.embed(); exit(0)
         for tool in response['tools']:
             if tool['function'] == "synthesize":
                 return tool['output']
