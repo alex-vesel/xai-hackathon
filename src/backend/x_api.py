@@ -2,10 +2,13 @@
 
 import os
 import tweepy
+from grok_interface import GrokInterface
 
 
 class XAPI:
     def __init__(self, api_key=None, api_secret_key=None):
+        self.similar_tweets_grok = GrokInterface()
+
         self.bearer_token = os.environ.get('X_BEARER_TOKEN')
         self.api_key = api_key or os.environ.get('X_API_KEY')
         self.api_secret_key = api_secret_key or os.environ.get('X_API_SECRET_KEY')
@@ -62,6 +65,16 @@ class XAPI:
             tweets = self.client.get_users_tweets(user.data.id, max_results=max_results)
             return tweets.data
         return []
+    
+    def get_tweet(self, tweet_id):
+        return self.client.get_tweet(tweet_id)
+    
+    def get_tweets_from_query(self, query, max_results=100):
+        """
+        Get tweets from a query.
+        """
+        tweets = self.client.search_recent_tweets(query=query, max_results=max_results)
+        return tweets.data
 
     def get_replies(self, tweet_id, max_results=100):
         """
@@ -92,6 +105,11 @@ if __name__ == "__main__":
         tweet_id = "1234567890"  # Replace with an actual tweet ID
         replies = xapi.get_replies(tweet_id, max_results=50)
         print(f"Replies to tweet {tweet_id}:", replies)
+
+        # Get tweets similar to a specific tweet
+        tweet_id = "1845200940468416998" 
+        similar = xapi.get_similar_tweets(tweet_id, max_results=50)
+        print(f"\n\nSimilar tweets to tweet {tweet_id}:", similar)
         
     except ValueError as e:
         print(f"Error: {e}")
