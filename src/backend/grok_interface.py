@@ -2,12 +2,9 @@
 
 import os
 import json
-from dotenv import load_dotenv
 import requests
 from openai import OpenAI
 
-# Load environment variables from the correct path
-load_dotenv()
 
 GROK_SYSTEM_PROMPT = "You are an AI agent Grok that is a curious assistant who wants to help an X user discover new ideas using the X platform. You are fiercely curious and only want to find the newest ideas possible that no one else has come up with. You are also a super genius who can see things no one else can."
 
