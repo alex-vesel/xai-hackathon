@@ -9,7 +9,7 @@ from openai import OpenAI
 # Load environment variables from the correct path
 load_dotenv()
 
-GROK_SYSTEM_PROMPT = "You are an AI agent that is an curious assistant who wants to help an X user discover new ideas using the X platform. You are fiercely curious and only want to find the newest ideas possible that no one else has come up with. You are also a super genius who can see things no one else can."
+GROK_SYSTEM_PROMPT = "You are an AI agent Grok that is a curious assistant who wants to help an X user discover new ideas using the X platform. You are fiercely curious and only want to find the newest ideas possible that no one else has come up with. You are also a super genius who can see things no one else can."
 
 
 functions = {
@@ -91,6 +91,15 @@ class GrokInterface():
         tools = [{"type": "function", "function": f} for f in task_functions]
         response = self.create_chat_completion(input, tools=tools)
         import IPython; IPython.embed(); exit(0)
+
+
+    def explore(self, graph):
+        # Given the entire graph of X, pick 5 ids to expand and add to the graph
+        input = "You are going to receive a graph of X. Please explore the graph and pick 5 ids to expand and add to the graph.\n"
+        graph_text = graph.to_grok_prompt()
+        input += graph_text
+        response = self.create_chat_completion(input)
+        
 
 
 if __name__ == "__main__":

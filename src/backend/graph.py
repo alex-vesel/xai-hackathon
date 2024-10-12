@@ -45,12 +45,20 @@ class Graph():
                         'weight': similarity
                     })
 
+<<<<<<< Updated upstream
     def init_from_tweets(self, tweets):
         for tweet in tweets:
             n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
             self.add_node(n)
         
         self.generate_links()
+=======
+    def to_grok_prompt(self):
+        prompt = "\n Here is the X graph for the user.\n\n"
+        for node in self.nodes:
+            prompt += f"<Node>: <id>{node.id}> <text>{node.text}\n\n"
+        return prompt
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     myGraph = Graph()
@@ -60,4 +68,4 @@ if __name__ == "__main__":
     node3 = Node("1844811140943183902", "I love blue color.", "https://twitter.com/twitter/status/1844811140943183902")
     myGraph.add_node([node1, node2, node3])
     myGraph.generate_links(api_key)
-    print(myGraph.links)
+    print(myGraph.to_grok_prompt())
