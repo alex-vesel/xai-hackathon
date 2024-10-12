@@ -1,16 +1,36 @@
 {
-    "nodes": [
-      { "id": "A" },
-      { "id": "B" },
-      { "id": "C" },
-      { "id": "D" },
-      { "id": "E" }
-    ],
-    "links": [
-      { "source": "A", "target": "B" },
-      { "source": "A", "target": "C" },
-      { "source": "B", "target": "D" },
-      { "source": "C", "target": "E" },
-      { "source": "D", "target": "E" }
-    ]
-  }
+  "nodes": [
+    {
+      "id": "A",
+      "tweet": "<blockquote class=\"twitter-tweet\" data-width=\"350\"><p lang=\"en\" dir=\"ltr\">Looks like Starship might fly on Sunday!<br><br>This is the largest &amp; most powerful flying object ever made at more than double the thrust of the Saturn V Moon rocket.<br><br>We will try to catch it upon return to launch site using the Mechazilla arms like giant chopsticks (like Karate Kid)! <a href=\"https://t.co/8g7mLaTCRK\">https://t.co/8g7mLaTCRK</a></p>&mdash; Elon Musk (@elonmusk) <a href=\"https://twitter.com/elonmusk/status/1844840205486043138\">October 11, 2024</a></blockquote>",
+      "url": "https://twitter.com/elonmusk/status/1844840205486043138"
+    },
+    {
+      "id": "B",
+      "tweet": "<blockquote class=\"twitter-tweet\" data-width=\"350\"><p lang=\"en\" dir=\"ltr\">Looks like Starship might fly on Sunday!<br><br>This is the largest &amp; most powerful flying object ever made at more than double the thrust of the Saturn V Moon rocket.<br><br>We will try to catch it upon return to launch site using the Mechazilla arms like giant chopsticks (like Karate Kid)! <a href=\"https://t.co/8g7mLaTCRK\">https://t.co/8g7mLaTCRK</a></p>&mdash; Elon Musk (@elonmusk) <a href=\"https://twitter.com/elonmusk/status/1844840205486043138\">October 11, 2024</a></blockquote>",
+      "url": "https://twitter.com/elonmusk/status/1844840205486043138"
+    },
+    {
+      "id": "C",
+      "tweet": "<blockquote class=\"twitter-tweet\" data-width=\"350\"><p lang=\"en\" dir=\"ltr\">Looks like Starship might fly on Sunday!<br><br>This is the largest &amp; most powerful flying object ever made at more than double the thrust of the Saturn V Moon rocket.<br><br>We will try to catch it upon return to launch site using the Mechazilla arms like giant chopsticks (like Karate Kid)! <a href=\"https://t.co/8g7mLaTCRK\">https://t.co/8g7mLaTCRK</a></p>&mdash; Elon Musk (@elonmusk) <a href=\"https://twitter.com/elonmusk/status/1844840205486043138\">October 11, 2024</a></blockquote>",
+      "url": "https://twitter.com/elonmusk/status/1844840205486043138"
+    },
+    {
+      "id": "D",
+      "tweet": "<blockquote class=\"twitter-tweet\" data-width=\"350\"><p lang=\"en\" dir=\"ltr\">Looks like Starship might fly on Sunday!<br><br>This is the largest &amp; most powerful flying object ever made at more than double the thrust of the Saturn V Moon rocket.<br><br>We will try to catch it upon return to launch site using the Mechazilla arms like giant chopsticks (like Karate Kid)! <a href=\"https://t.co/8g7mLaTCRK\">https://t.co/8g7mLaTCRK</a></p>&mdash; Elon Musk (@elonmusk) <a href=\"https://twitter.com/elonmusk/status/1844840205486043138\">October 11, 2024</a></blockquote>",
+      "url": "https://twitter.com/elonmusk/status/1844840205486043138"
+    },
+    {
+      "id": "E",
+      "tweet": "<blockquote class=\"twitter-tweet\" data-width=\"350\"><p lang=\"en\" dir=\"ltr\">Looks like Starship might fly on Sunday!<br><br>This is the largest &amp; most powerful flying object ever made at more than double the thrust of the Saturn V Moon rocket.<br><br>We will try to catch it upon return to launch site using the Mechazilla arms like giant chopsticks (like Karate Kid)! <a href=\"https://t.co/8g7mLaTCRK\">https://t.co/8g7mLaTCRK</a></p>&mdash; Elon Musk (@elonmusk) <a href=\"https://twitter.com/elonmusk/status/1844840205486043138\">October 11, 2024</a></blockquote>",
+      "url": "https://twitter.com/elonmusk/status/1844840205486043138"
+    }
+  ],
+  "links": [
+    { "source": "A", "target": "B" },
+    { "source": "A", "target": "C" },
+    { "source": "B", "target": "D" },
+    { "source": "C", "target": "E" },
+    { "source": "D", "target": "E" }
+  ]
+}
