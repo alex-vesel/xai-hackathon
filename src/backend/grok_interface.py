@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 import requests
 from openai import OpenAI
 
@@ -13,6 +14,25 @@ def get_user_summary(user_summary, user_tags):
         "user_summary": user_summary,
         "user_tags": user_tags,
     }
+
+def explore(expand_ids):
+    return {
+        'expand_ids': expand_ids,
+    }
+
+def synthesize(user, new_ideas, source_ids):
+    output =[]
+    for idea, source_id in zip(new_ideas, source_ids):
+        output.append({
+            "idea": idea,
+            "source_id": source_id,
+        })
+    return output
+
+
+def extract_node_ids_from_text(text):
+    # extract all 19 digit numbers from text
+    return re.findall(r'\b\d{19}\b', text)
 
 functions = {
     'get_user_summary': {
@@ -39,22 +59,72 @@ functions = {
             },
         },
         "function": get_user_summary,
-    }
+    },
+    'explore': {
+        "description": {
+            "name": "explore",
+            "description": "Call this function to explore the graph and pick 5 ids to expand and add to the graph.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "expand_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "description": "A list of ids to expand and add to the graph.",
+                    }
+                },
+                "required": ["expand_ids"],
+                "optional": [],
+            },
+        },
+        "function": explore,
+    },
+    'synthesize': {
+        "description": {
+            "name": "synthesize",
+            "description": "Call this function to create new ideas based on the user and the graph.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "new_ideas": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "description": "A list of new ideas based on the user and the graph.",
+                    },
+                    "source_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                        },
+                        "description": "A list of source ids for the new ideas.",
+                    }
+                },
+                "required": ["new_ideas", "source_ids"],
+                "optional": [],
+            },
+        },
+        "function": synthesize,
+    },
 }
 
 
 class GrokInterface():
     def __init__(self):
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("XAI_API_KEY")
         if not self.api_key:
             raise ValueError("API key not found in environment variables. Please check your secrets.env file.")
         self.client = OpenAI(
             api_key=self.api_key,
-            # base_url="https://api.x.ai/v1",
-            base_url="https://api.openai.com/v1"
+            base_url="https://api.x.ai/v1",
+            # base_url="https://api.openai.com/v1"
         )
         # self.model_name = "grok-2-public"
-        self.model_name = "gpt-3.5-turbo"
+        self.model_name = "grok-preview"
+        # self.model_name = "gpt-3.5-turbo"
         self.conversation =  [{"role": "system", "content": GROK_SYSTEM_PROMPT}]
 
 
@@ -84,13 +154,22 @@ class GrokInterface():
             stream=False,
         )
         output = {'text': response.choices[0].message.content, 'tools': []}
-        for tool_call in response.choices[0].message.tool_calls:
-            arguments = json.loads(tool_call.function.arguments)
-            function_name = tool_call.function.name
-            function_output = functions[function_name]["function"](**arguments)
+        used_functions = []
+        if response.choices[0].message.tool_calls is not None:
+            for tool_call in response.choices[0].message.tool_calls:
+                arguments = json.loads(tool_call.function.arguments)
+                function_name = tool_call.function.name
+                function_output = functions[function_name]["function"](**arguments)
+                output['tools'].append({
+                    'function': function_name,
+                    'output': function_output,
+                })
+                used_functions.append(function_name)
+        ## HACK because API often doesn't use this tool
+        if "function': {'name': 'explore'" in str(tools) and "explore" not in used_functions:
             output['tools'].append({
-                'function': function_name,
-                'output': function_output,
+                'function': "explore",
+                'output': {"expand_ids": extract_node_ids_from_text(output['text'])},
             })
         self.add_system_message(output['text'])
         return output
@@ -107,6 +186,35 @@ class GrokInterface():
             if tool['function'] == "get_user_summary":
                 return tool['output']
         return None
+
+
+    def explore(self, user, graph):
+        # Given the entire graph of X, pick 5 ids to expand and add to the graph
+        input = "You are going to receive a graph of X. Please explore the graph and pick 5 ids to expand and add to the graph. You must call the provided function.\n"
+        input += str(user)
+        input += graph.to_grok_prompt()
+        task_functions = [functions["explore"]]
+        tools = [{"type": "function", "function": f['description']} for f in task_functions]
+        response = self.create_chat_completion(input, tools=tools)
+        for tool in response['tools']:
+            if tool['function'] == "explore":
+                return tool['output']
+        return None
+    
+
+    def synthesize(self, user, graph):
+        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please call the provided function.\n"
+        input += str(user)
+        input += graph.to_grok_prompt()
+        task_functions = [functions["synthesize"]]
+        tools = [{"type": "function", "function": f['description']} for f in task_functions]
+        response = self.create_chat_completion(input, tools=tools)
+        import IPython; IPython.embed(); exit(0)
+        for tool in response['tools']:
+            if tool['function'] == "synthesize":
+                return tool['output']
+        return None
+        
 
 
     def explore(self, graph):

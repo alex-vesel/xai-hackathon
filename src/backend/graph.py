@@ -29,6 +29,10 @@ class Graph():
             'target': b,
             'weight': weight
         })
+
+    def add_node(self, node):
+        # get node html first
+        self.nodes.append(node)
     
     def generate_links(self, similarity_threshold = 0.75):
         api_key = os.environ.get("XAI_API_KEY")
@@ -56,9 +60,11 @@ class Graph():
     def init_from_tweets(self, tweets):
         for tweet in tweets:
             n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
-            self.nodes.append(n)
+            self.add_node(n)
         
         self.generate_links()
+
+
     def to_grok_prompt(self):
         prompt = "\n Here is the X graph for the user.\n\n"
         for node in self.nodes:
