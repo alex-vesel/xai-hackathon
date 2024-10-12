@@ -19,8 +19,15 @@ class Graph():
     def add_node(self, nodes):
         for node in nodes:
             self.nodes.append(node)
+
+    def add_link_manual(self, a, b, weight=0.5):
+        self.links.append({
+            'a': a,
+            'b': b,
+            'weight': weight
+        })
     
-    def generate_links(self, api_key):
+    def generate_links(self, api_key, similarity_threshold = 0.5):
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
                 # Generate embeddings for the two nodes
@@ -31,10 +38,10 @@ class Graph():
                 similarity = np.dot(embedding_i, embedding_j) / (np.linalg.norm(embedding_i) * np.linalg.norm(embedding_j))
                 
                 # If similarity is above a threshold, create a link
-                if similarity > 0.5:  # Adjust threshold as needed
+                if similarity > similarity_threshold:  # Adjust threshold as needed
                     self.links.append({
-                        'source': self.nodes[i].id,
-                        'target': self.nodes[j].id,
+                        'a': self.nodes[i].id,
+                        'b': self.nodes[j].id,
                         'weight': similarity
                     })
 
