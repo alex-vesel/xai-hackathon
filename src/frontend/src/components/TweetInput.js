@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { fetchTweetsFromCategory } from '../endpoints/TweetFetcher'; // Import from TweetFetcher.js
+import axios from 'axios';
 
 function TweetInput({ setTweetId }) {
   const [inputValue, setInputValue] = useState('');
@@ -16,10 +16,18 @@ function TweetInput({ setTweetId }) {
       setTweetId('');
     }
     try {
-      const tweets = await fetchTweetsFromCategory(inputValue); // Replace 'someCategory' with actual category
-      console.log(tweets);
+      const headers = {
+        Authorization: `Bearer your_generated_api_token_here`,
+        'Content-Type': 'application/json',
+      };
+      console.log("GETTING DATA");
+      const response = await axios.get(`http://0.0.0.0:5001/tweets_from_category?category=${inputValue}`, {
+        params: headers,
+      });
+      const graph = response.data;
+      console.log(graph);
     } catch (error) {
-      console.error('Error fetching tweets:', error);
+      console.error('Error initializing user graph:', error);
     }
   };
 

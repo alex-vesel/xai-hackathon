@@ -45,7 +45,7 @@ functions = {
 
 class GrokInterface():
     def __init__(self):
-        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("XAI_API_KEY")
         if not self.api_key:
             raise ValueError("API key not found in environment variables. Please check your secrets.env file.")
         self.client = OpenAI(

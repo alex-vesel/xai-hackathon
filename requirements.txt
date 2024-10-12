@@ -1,7 +1,6 @@
-Flask==3.0.3
-flask_cors==5.0.0
-ipython==8.13.2
+fastapi==0.115.2
 numpy==2.1.2
-openai==0.27.7
+openai==1.51.2
 Requests==2.32.3
 tweepy==4.14.0
+uvicorn==0.31.1
