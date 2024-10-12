@@ -4,35 +4,43 @@ import numpy as np
 
 tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
 
+DEBUG = True
+
 class Node():
     def __init__(self, id, text, url):
         self.id = id
         self.text = text
         self.url = url
 
+    def __str__(self):
+        return f"Node: {self.id} {self.text}"
+    
+    def __repr__(self):
+        return f"Node: {self.id} {self.text}"
+
 class Graph():
     def __init__(self):
         self.nodes = []
         self.links = []
 
-    def add_node(self, nodes):
-        for node in nodes:
-            self.nodes.append(node)
-
     def add_link_manual(self, a, b, weight=0.5):
         self.links.append({
-            'a': a,
-            'b': b,
+            'source': a,
+            'target': b,
             'weight': weight
         })
     
-    def generate_links(self, similarity_threshold = 0.5):
+    def generate_links(self, similarity_threshold = 0.75):
         api_key = os.environ.get("XAI_API_KEY")
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
                 # Generate embeddings for the two nodes
-                embedding_i = xai_embed_api.get_embedding(api_key, self.nodes[i].text)
-                embedding_j = xai_embed_api.get_embedding(api_key, self.nodes[j].text)
+                if DEBUG:
+                    embedding_i = np.random.rand(512)
+                    embedding_j = np.random.rand(512)
+                else:
+                    embedding_i = np.array(xai_embed_api.get_embedding(api_key, self.nodes[i].text))
+                    embedding_j = np.array(xai_embed_api.get_embedding(api_key, self.nodes[j].text))
                 
                 # Calculate similarity between embeddings
                 similarity = np.dot(embedding_i, embedding_j) / (np.linalg.norm(embedding_i) * np.linalg.norm(embedding_j))
@@ -40,15 +48,15 @@ class Graph():
                 # If similarity is above a threshold, create a link
                 if similarity > similarity_threshold:  # Adjust threshold as needed
                     self.links.append({
-                        'a': self.nodes[i].id,
-                        'b': self.nodes[j].id,
+                        'source': self.nodes[i].id,
+                        'target': self.nodes[j].id,
                         'weight': similarity
                     })
 
     def init_from_tweets(self, tweets):
         for tweet in tweets:
             n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
-            self.add_node(n)
+            self.nodes.append(n)
         
         self.generate_links()
     def to_grok_prompt(self):
@@ -56,6 +64,20 @@ class Graph():
         for node in self.nodes:
             prompt += f"<Node>: <id>{node.id}> <text>{node.text}\n\n"
         return prompt
+    
+
+    def to_server_format(self):
+        nodes = []
+        for node in self.nodes:
+            nodes.append({
+                'id': node.id,
+                'text': node.text,
+                'url': node.url
+            })
+        return {
+            'nodes': nodes,
+            'links': self.links
+        }
 
 if __name__ == "__main__":
     myGraph = Graph()
