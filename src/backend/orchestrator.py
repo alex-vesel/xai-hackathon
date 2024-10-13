@@ -39,7 +39,7 @@ class Orchestrator():
         output = self.grok.get_user_summary(recent_tweets)
         self.user = User(username, output['user_summary'], output['user_tags'])
 
-    def init_user_graph(self, username, node_limit=10):
+    def init_user_graph(self, username, node_limit=30):
         self.grok.clear_chat()
         if self.user is None:
             self.build_user_description(username)
@@ -63,6 +63,11 @@ class Orchestrator():
     def synthesize(self):
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
+        self.saved_chat.append(self.grok.format_user_message("Please synthesize some new ideas for me!"))
+        output_str = ""
+        for idea in output:
+            output_str += idea['idea'] + "\n\n"
+        self.saved_chat.append(self.grok.format_system_message(output_str))
         return output
     
     def chat_with_graph(self, input):
@@ -127,7 +132,8 @@ class Orchestrator():
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
-    orchestrator.chat_with_graph("Tell me the most exciting things happening on X right now!")
-    orchestrator.chat_with_graph("What were we just talking about? Summarize in one word.")
+    orchestrator.synthesize()
+    # orchestrator.chat_with_graph("Tell me the most exciting things happening on X right now!")
+    # orchestrator.chat_with_graph("What were we just talking about? Summarize in one word.")
     # orchestrator.synthesize()
     # print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))

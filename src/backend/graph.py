@@ -4,7 +4,7 @@ import numpy as np
 
 tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
 
-DEBUG = False
+DEBUG = True
 
 class Node():
     def __init__(self, id, text, url):
@@ -34,19 +34,20 @@ class Graph():
         # get node html first
         self.nodes.append(node)
     
-    def generate_links(self, similarity_threshold = 0.75):
+    def generate_links(self, similarity_threshold = 0.76):
         api_key = os.environ.get("XAI_API_KEY")
         embeds = []
-        for node in self.nodes:
-            embeds.append(np.array(xai_embed_api.get_embedding(node.text)))
+        if not DEBUG:
+            for node in self.nodes:
+                embeds.append(np.array(xai_embed_api.get_embedding(node.text)))
 
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
                 print(i, j)
                 # Generate embeddings for the two nodes
                 if DEBUG:
-                    embedding_i = np.random.rand(512)
-                    embedding_j = np.random.rand(512)
+                    embedding_i = np.random.rand(256)
+                    embedding_j = np.random.rand(256)
                 else:
                     embedding_i = embeds[i]
                     embedding_j = embeds[j]
