@@ -24,6 +24,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   const nodeIdCounter = useRef(0); // Counter for unique node IDs
   const [focusNode, setFocusNode] = useState(null); // Node to focus on after updates
   const [selectedNode, setSelectedNode] = useState(null); // Node selected for adding similar nodes
+  const [isGraphRendered, setIsGraphRendered] = useState(false); // New state to track if graph is rendered
 
   // Update graphState when graphData prop changes
   useEffect(() => {
@@ -46,6 +47,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   useEffect(() => {
     if (!graphState.nodes.length && !graphState.links.length) {
       d3.select(svgRef.current).selectAll("*").remove();
+      setIsGraphRendered(false);
       return;
     }
 
@@ -54,7 +56,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     linksRef.current = graphState.links.map(d => ({ ...d }));
 
     const svg = d3.select(svgRef.current)
-      .attr("width", width)
+      .attr("width", "100%")
       .attr("height", height)
       .attr("viewBox", [0, 0, width, height])
       .style("max-width", "100%")
@@ -143,6 +145,8 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       // Reset focusNode
       setFocusNode(null);
     }
+
+    setIsGraphRendered(true);
 
     return () => simulation.stop();
 
@@ -373,19 +377,21 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: `${width}px`, height: `${height}px` }}>
+    <div style={{ position: 'relative', width: '100%', height: `${height}px`, overflow: 'hidden' }}>
       <button
         onClick={handleReset}
-        style={{ position: 'absolute', zIndex: 1 }}
+        style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
       >
         &#8592; {/* Backwards arrow */}
       </button>
-      <button
-        onClick={handleAddSimilarNodes}
-        style={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}
-      >
-        +
-      </button>
+      {isGraphRendered && (
+        <button
+          onClick={handleAddSimilarNodes}
+          style={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}
+        >
+          +
+        </button>
+      )}
       <svg ref={svgRef}></svg>
       {tooltip.visible && (
         <div
