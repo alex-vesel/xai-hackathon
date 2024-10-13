@@ -59,12 +59,16 @@ const ChatSidebar = () => {
       ]);
       // iterate over the data and add each response to the messages
       // data is a list of dicts with key "idea"
+      // create list of tweet ids from response
+      let tweetIds = [];
       for (let i = 0; i < data.length; i++) {
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: data[i].idea, sender: 'llm' },
         ]);
+        tweetIds.push(data[i].source_id);
       }
+      console.log(tweetIds);
     } catch (error) {
       console.error('Error fetching synthesis response:', error);
       setMessages((prevMessages) => [

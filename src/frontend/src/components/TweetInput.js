@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './TweetInput.css'; // Create a CSS file for styling
 
 function TweetInput({ setTweetId, setGraphData }) {
   const [inputValue, setInputValue] = useState('');
@@ -33,7 +34,7 @@ function TweetInput({ setTweetId, setGraphData }) {
   };
 
   return (
-    <div>
+    <div className="tweet-input">
       <input
         type="text"
         placeholder="Enter X username"
