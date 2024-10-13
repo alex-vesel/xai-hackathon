@@ -211,15 +211,18 @@ class GrokInterface():
     
 
     def synthesize(self, user, graph):
-        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please phrase the ideas as a message to the user in a fun, humourus way! Please call the provided function to add your response. Keep the messages short and use newlines!\n"
-        input += str(user)
-        input += graph.to_grok_prompt()
-        task_functions = [functions["synthesize"]]
-        tools = [{"type": "function", "function": f['description']} for f in task_functions]
-        response = self.create_chat_completion(input, tools=tools)
-        for tool in response['tools']:
-            if tool['function'] == "synthesize":
-                return tool['output']
+        try:
+            input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please phrase the ideas as a message to the user in a fun, humourus way! Please call the provided function to add your response. Keep the messages short and use newlines! Make the messages fun with emojis and hashtags!\n"
+            input += str(user)
+            input += graph.to_grok_prompt()
+            task_functions = [functions["synthesize"]]
+            tools = [{"type": "function", "function": f['description']} for f in task_functions]
+            response = self.create_chat_completion(input, tools=tools)
+            for tool in response['tools']:
+                if tool['function'] == "synthesize":
+                    return tool['output']
+        except:
+            import IPython; IPython.embed(); exit(0)
         return None
     
 

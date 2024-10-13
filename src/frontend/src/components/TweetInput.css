@@ -1,0 +1,51 @@
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    border-radius: 10px; /* Added border-radius */
+    font-weight: bold; /* Make font bold */
+    font-size: 11px; /* Make font size smaller */
+}
+
+.tweet-input {
+    /* align left */
+
+}
+
+.tweet-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+    font-weight: bold; /* Make font bold */
+    font-size: 11px; /* Make font size smaller */
+}
+
+.tweet-input button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold; /* Make font bold */
+    font-size: 11px; /* Make font size smaller */
+}
+
+.loading-bar {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #f0f0f0;
+    color: #333;
+    text-align: center;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 11px; /* Make font size smaller */
+}
+
+.tweet-input button:hover {
+    background-color: #0056b3;
+    font-weight: bold; /* Make font bold */
+    font-size: 11px; /* Make font size smaller */
+}
