@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
-import { addSimilarNodes } from './endpoints/AddNodes';
+import axios from 'axios';
 import './ForceGraph.css';
 
 const ForceGraph = ({ width = 928, height = 600, graphData }) => {
@@ -347,7 +347,8 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
         const tweetId = tweetIdMatch ? tweetIdMatch[1] : null;
 
         if (tweetId) {
-          const newNodes = await addSimilarNodes(tweetId);
+          const response = await axios.get(`http://0.0.0.0:5001/add_similar_tweets?tweet_id=${tweetId}`);
+          const newNodes = response.data;
           const updatedNodes = [...graphState.nodes, ...newNodes.nodes];
           const updatedLinks = [...graphState.links, ...newNodes.links];
 
