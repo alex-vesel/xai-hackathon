@@ -10,21 +10,61 @@ const ChatSidebar = () => {
     setInput(e.target.value);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim()) {
       const userMessage = { text: input, sender: 'user' };
       setMessages((prevMessages) => [...prevMessages, userMessage]);
       setInput('');
       setLoading(true);
 
-      // Simulate a delay for the LLM response
-      setTimeout(() => {
+      try {
+        const response = await fetch(`http://0.0.0.0:5001/chat_with_graph?input=${input}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: 'This is a simulated response from the LLM.', sender: 'llm' },
+          { text: data.response, sender: 'llm' },
         ]);
+      } catch (error) {
+        console.error('Error fetching LLM response:', error);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: 'Error fetching response from the LLM.', sender: 'llm' },
+        ]);
+      } finally {
         setLoading(false);
-      }, 2000); // 2-second delay
+      }
+    }
+  };
+
+  const handleSynthesize = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`http://0.0.0.0:5001/synthesize`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await response.json();
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: data, sender: 'llm' },
+      ]);
+    } catch (error) {
+      console.error('Error fetching synthesis response:', error);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: 'Error fetching synthesis response from the LLM.', sender: 'llm' },
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,6 +93,9 @@ const ChatSidebar = () => {
           placeholder="Ask Grok to Guide you..."
         />
         <button onClick={handleSend}>Send</button>
+        <button onClick={handleSynthesize}>
+          <img src="synthesize-icon.png" alt="Synthesize" />
+        </button>
       </div>
     </div>
   );

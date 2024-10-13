@@ -53,6 +53,33 @@ async def init_user_graph(username: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Endpoint: Synthesize
+@app.get('/synthesize')
+async def synthesize():
+    try:
+        output = orchestrator.synthesize()
+        return JSONResponse(content=output)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Endpoint: Add similar tweets
+@app.get('/add_similar_tweets')
+async def add_similar_tweets(tweet_id: str):
+    try:
+        tweets = orchestrator.get_similar_tweets_from_id(tweet_id)
+        return jsonify_tweet_list(tweets)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Endpoint: Chat with graph
+@app.get('/chat_with_graph')
+async def chat_with_graph(input: str):
+    try:
+        output = orchestrator.chat_with_graph(input)
+        return JSONResponse(content={"response": output})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     logger.error(f"HTTP error occurred: {exc.detail}")
