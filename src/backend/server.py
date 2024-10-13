@@ -44,7 +44,9 @@ def synthesize():
 
 @app.route('/add_similar_tweets')
 def add_similar_tweets():
-    tweets = orchestrator.get_similar_tweets_from_id(request.args.get('tweet_id'))
+    new_tweets = orchestrator.get_similar_tweets_from_id(request.args.get('tweet_id'))
+    old_tweets = orchestrator.get_self_tweets()
+    tweets = old_tweets + new_tweets
     return jsonify_tweet_list(tweets)
 
 @app.route('/chat_with_graph')

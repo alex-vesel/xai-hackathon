@@ -18,6 +18,7 @@ class User:
 class Orchestrator():
     def __init__(self):
         self.graph = Graph()
+        self.tweets = []
         self.grok = GrokInterface()
         self.similar_tweets_grok = GrokInterface()
         self.x_api = XAPI()
@@ -47,8 +48,12 @@ class Orchestrator():
         print("user tags", self.user.tags)
         for tag in self.user.tags:
             init_tweets += self.x_api.get_tweets_from_category(tag, max_results=10)
+        self.tweets = init_tweets
         self.graph.init_from_tweets(init_tweets, node_limit)
         return self.graph
+
+    def get_self_tweets(self):
+        return self.tweets
 
     def explore(self):
         # allow grok to explore the graph
@@ -132,7 +137,8 @@ class Orchestrator():
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
-    orchestrator.synthesize()
+    # orchestrator.synthesize()
+    print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
     # orchestrator.chat_with_graph("Tell me the most exciting things happening on X right now!")
     # orchestrator.chat_with_graph("What were we just talking about? Summarize in one word.")
     # orchestrator.synthesize()
