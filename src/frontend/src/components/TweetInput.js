@@ -36,7 +36,7 @@ function TweetInput({ setTweetId, setGraphData }) {
     <div>
       <input
         type="text"
-        placeholder="Enter Twitter URL"
+        placeholder="Enter X username"
         value={inputValue}
         onChange={handleInputChange}
         style={{
