@@ -65,6 +65,14 @@ class Graph():
         self.generate_links()
 
 
+    def add_tweets(self, tweets):
+        for tweet in tweets:
+            n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
+            self.add_node(n)
+        
+        self.generate_links()
+
+
     def to_grok_prompt(self):
         prompt = "\n Here is the X graph for the user.\n\n"
         for node in self.nodes:

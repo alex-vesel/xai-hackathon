@@ -55,18 +55,15 @@ class Orchestrator():
         expand_ids = output['expand_ids']
 
         for id in expand_ids:
-            new_tweets = self.get_similar_tweets_from_id(id)
+            new_tweets = self.get_similar_tweets_from_id(id, max_results=5)
+            self.graph.add_tweets(new_tweets)
 
     def synthesize(self):
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
         return output
 
-    def explore(self):
-        # allow grok to explore the graph
-        self.grok.explore(self.graph)
-
-    def get_similar_tweets_from_id(self, tweet_id, max_results=100):
+    def get_similar_tweets_from_id(self, tweet_id, max_results=10):
         """
         Get tweets similar to a specific tweet.
         """
@@ -118,5 +115,6 @@ class Orchestrator():
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
-    orchestrator.synthesize()
-    print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
+    orchestrator.explore()
+    # orchestrator.synthesize()
+    # print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
