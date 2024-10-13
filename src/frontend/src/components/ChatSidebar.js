@@ -27,9 +27,16 @@ const ChatSidebar = () => {
         });
 
         const data = await response.json();
+        // set response so if it sees **text** it will bold
+        let responseText = data.response;
+        if (responseText.includes("**")) {
+          responseText = responseText.replace(/\*\*/g, "\n");
+          responseText = responseText.replace(/\*\*/g, "\n");
+        }
+        console.log('response:', responseText);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: data.response, sender: 'llm' },
+          { text: responseText, sender: 'llm' },
         ]);
       } catch (error) {
         console.error('Error fetching LLM response:', error);
@@ -110,7 +117,7 @@ const ChatSidebar = () => {
         />
         <button onClick={handleSend}>Send</button>
         <button onClick={handleSynthesize}>
-          <img src="synthesize-icon.png" alt="Synthesize" />
+          <img className="synthesize-icon" src="https://cdn.icon-icons.com/icons2/2622/PNG/512/scifi_hitchhikers_guide_to_the_galaxy_icon_157473.png" alt="Synthesize" />
         </button>
       </div>
     </div>
