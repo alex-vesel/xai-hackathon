@@ -246,6 +246,9 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     // Update state and set focusNode
     setGraphState({ nodes: updatedNodes, links: updatedLinks });
     setFocusNode(d);
+
+    // Save the updated state for backtracking
+    setLastState({ transform: currentTransform, graphState: { nodes: updatedNodes, links: updatedLinks } });
   }
 
   // Add this new function for handling double-clicks
@@ -269,12 +272,14 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       }
     });
 
-    // Change color of the node and its neighbors
+    // Change color and opacity of the node and its neighbors
     nodeSelectionRef.current
-      .style("fill", n => connectedNodes.has(n.id) ? "orange" : colorRef.current(n.group || 1));
+      .style("fill", n => connectedNodes.has(n.id) ? "orange" : colorRef.current(n.group || 1))
+      .style("opacity", n => connectedNodes.has(n.id) ? 1 : 0.1); // Dim non-connected nodes
 
     linkSelectionRef.current
-      .style("stroke", l => (l.source.id === d.id || l.target.id === d.id) ? "orange" : "#999");
+      .style("stroke", l => (l.source.id === d.id || l.target.id === d.id) ? "orange" : "#999")
+      .style("opacity", l => (l.source.id === d.id || l.target.id === d.id) ? 1 : 0.1); // Dim non-connected links
 
     svg.transition()
       .duration(750)
@@ -284,42 +289,39 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       );
   }
 
-  // Backtrack function
-  function handleBacktrack() {
-    if (lastState) {
-      const svg = d3.select(svgRef.current);
+  // Reset function
+  function handleReset() {
+    const svg = d3.select(svgRef.current);
 
-      // Restore graph data
-      setGraphState(lastState.graphState);
+    // Reset opacity and color for nodes
+    nodeSelectionRef.current
+      .style("fill", d => colorRef.current(d.group || 1))
+      .style("opacity", 1);
 
-      // Apply the last transform after a slight delay to ensure the graph updates
-      setTimeout(() => {
-        // Apply the last transform
-        svg.transition()
-          .duration(750)
-          .call(
-            zoomRef.current.transform,
-            lastState.transform
-          );
+    // Reset opacity and color for links
+    linkSelectionRef.current
+      .style("stroke", "#999") // Reset to default stroke color
+      .style("opacity", 1);
 
-        // Reset opacity
-        nodeSelectionRef.current.style("opacity", 1);
-        linkSelectionRef.current.style("opacity", 1);
+    // Zoom back out
+    svg.transition()
+      .duration(750)
+      .call(
+        zoomRef.current.transform,
+        d3.zoomIdentity
+      );
 
-        // Clear the last state
-        setLastState(null);
-      }, 0);
-    }
+    // Deselect the focus node
+    setFocusNode(null);
   }
 
   return (
     <div style={{ position: 'relative', width: `${width}px`, height: `${height}px` }}>
       <button
-        onClick={handleBacktrack}
+        onClick={handleReset}
         style={{ position: 'absolute', zIndex: 1 }}
-        disabled={!lastState}
       >
-        Backtrack
+        &#8592; {/* Backwards arrow */}
       </button>
       <svg ref={svgRef}></svg>
       {tooltip.visible && (
