@@ -11,10 +11,10 @@ function App() {
   const [tweetId, setTweetId] = useState('');
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
 
-  useEffect(() => {
-    // Save graph data to localStorage whenever it changes
-    localStorage.setItem('graphData', JSON.stringify(graphData));
-  }, [graphData]);
+  // useEffect(() => {
+  //   // Save graph data to localStorage whenever it changes
+  //   localStorage.setItem('graphData', JSON.stringify(graphData));
+  // }, [graphData]);
 
   return (
     <div className="App">

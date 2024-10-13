@@ -36,7 +36,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     const [x, y] = d3.pointer(event, svgRef.current);
     const tweetIdMatch = d.url.match(/status\/(\d+)/);
     const tweetId = tweetIdMatch ? tweetIdMatch[1] : null;
-    setTooltip({ visible: true, tweetId: tweetId, x: x + 20, y: y + 20 });
+    setTooltip({ visible: true, tweetId: tweetId, x: x + 20 , y: y + 20});
   }
 
   // Hide tooltip
@@ -302,8 +302,19 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   }
 
   // New function to highlight nodes by ID
-  function highlightNodesById(nodeIds) {
+  function highlightNodesById(nodeUrls) {
     const svg = svgSelectionRef.current;
+
+    // Parse the IDs from the URLs
+    const nodeIds = new Set();
+    nodeUrls.forEach(url => {
+      const tweetIdMatch = url.match(/status\/(\d+)/);
+      if (tweetIdMatch) {
+        const tweetId = tweetIdMatch[1];
+        console.log(`Parsed tweet ID: ${tweetId}`);
+        nodeIds.add(String(tweetId));
+      }
+    });
 
     // Highlight the specified nodes and dim others
     nodeSelectionRef.current
@@ -398,8 +409,8 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
         <div
           className="tooltip"
           style={{
-            left: tooltip.x - 10,
-            top: tooltip.y - 10,
+            left: tooltip.x,
+            top: tooltip.y,
             position: 'absolute',
             width: 300,
             height: 400,
