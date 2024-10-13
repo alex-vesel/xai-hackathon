@@ -289,6 +289,20 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       );
   }
 
+  // New function to highlight nodes by ID
+  function highlightNodesById(nodeIds) {
+    const svg = svgSelectionRef.current;
+
+    // Highlight the specified nodes and dim others
+    nodeSelectionRef.current
+      .style("fill", n => nodeIds.has(n.id) ? "orange" : "gray")
+      .style("opacity", n => nodeIds.has(n.id) ? 1 : 0.1); // Dim non-highlighted nodes
+
+    linkSelectionRef.current
+      .style("stroke", l => (nodeIds.has(l.source.id) && nodeIds.has(l.target.id)) ? "orange" : "gray")
+      .style("opacity", l => (nodeIds.has(l.source.id) && nodeIds.has(l.target.id)) ? 1 : 0.1); // Dim non-highlighted links
+  }
+
   // Reset function
   function handleReset() {
     const svg = d3.select(svgRef.current);
@@ -314,6 +328,21 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     // Deselect the focus node
     setFocusNode(null);
   }
+
+  useEffect(() => {
+    const handleHighlightNodes = (event) => {
+      const { tweetIds } = event.detail;
+      highlightNodesById(new Set(tweetIds));
+    };
+
+    // Add event listener for custom event
+    window.addEventListener('highlightNodes', handleHighlightNodes);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('highlightNodes', handleHighlightNodes);
+    };
+  }, []);
 
   return (
     <div style={{ position: 'relative', width: `${width}px`, height: `${height}px` }}>

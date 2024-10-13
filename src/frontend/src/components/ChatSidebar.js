@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './ChatSidebar.css'; // Create a CSS file for styling
+import { highlightNodesById } from '../forcegraph'; // Import the highlight function
 
 const ChatSidebar = () => {
   const [input, setInput] = useState('');
@@ -57,9 +58,7 @@ const ChatSidebar = () => {
         ...prevMessages,
         { text: "Well do I have some new ideas for you!", sender: 'llm' },
       ]);
-      // iterate over the data and add each response to the messages
-      // data is a list of dicts with key "idea"
-      // create list of tweet ids from response
+
       let tweetIds = [];
       for (let i = 0; i < data.length; i++) {
         setMessages((prevMessages) => [
@@ -69,6 +68,11 @@ const ChatSidebar = () => {
         tweetIds.push(data[i].source_id);
       }
       console.log(tweetIds);
+
+      // Dispatch a custom event with the tweet IDs
+      const event = new CustomEvent('highlightNodes', { detail: { tweetIds } });
+      window.dispatchEvent(event);
+
     } catch (error) {
       console.error('Error fetching synthesis response:', error);
       setMessages((prevMessages) => [
