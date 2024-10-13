@@ -62,10 +62,14 @@ class Graph():
                         'weight': similarity
                     })
 
-    def init_from_tweets(self, tweets):
+    def init_from_tweets(self, tweets, node_limit):
+        count = 0
         for tweet in tweets:
+            if count > node_limit:
+                break
             n = Node(tweet.id, tweet.text, tweet_id_to_url(tweet.id))
             self.add_node(n)
+            count+=1
         
         self.generate_links()
 
