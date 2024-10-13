@@ -42,6 +42,10 @@ def synthesize():
     return jsonify(output)
 
 
+@app.route('/add_similar_tweets')
+def add_similar_tweets():
+    tweets = orchestrator.get_similar_tweets_from_id(request.args.get('tweet_id'))
+    return jsonify_tweet_list(tweets)
 
 
 if __name__ == '__main__':

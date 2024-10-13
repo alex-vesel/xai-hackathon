@@ -4,7 +4,7 @@ import numpy as np
 
 tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
 
-DEBUG = True
+DEBUG = False
 
 class Node():
     def __init__(self, id, text, url):
@@ -36,15 +36,20 @@ class Graph():
     
     def generate_links(self, similarity_threshold = 0.75):
         api_key = os.environ.get("XAI_API_KEY")
+        embeds = []
+        for node in self.nodes:
+            embeds.append(np.array(xai_embed_api.get_embedding(api_key, node.text)))
+
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
+                print(i, j)
                 # Generate embeddings for the two nodes
                 if DEBUG:
                     embedding_i = np.random.rand(512)
                     embedding_j = np.random.rand(512)
                 else:
-                    embedding_i = np.array(xai_embed_api.get_embedding(api_key, self.nodes[i].text))
-                    embedding_j = np.array(xai_embed_api.get_embedding(api_key, self.nodes[j].text))
+                    embedding_i = embeds[i]
+                    embedding_j = embeds[j]
                 
                 # Calculate similarity between embeddings
                 similarity = np.dot(embedding_i, embedding_j) / (np.linalg.norm(embedding_i) * np.linalg.norm(embedding_j))
@@ -88,9 +93,11 @@ class Graph():
 if __name__ == "__main__":
     myGraph = Graph()
     api_key = os.getenv("XAI_API_KEY")
-    node1 = Node("1844811140943183900", "I absolutely hate the color blue.", "https://twitter.com/twitter/status/1844811140943183900")
-    node2 = Node("1844811140943183901", "Blue is a terrible color.", "https://twitter.com/twitter/status/1844811140943183901")
-    node3 = Node("1844811140943183902", "I love blue color.", "https://twitter.com/twitter/status/1844811140943183902")
-    myGraph.add_node([node1, node2, node3])
-    myGraph.generate_links(api_key)
-    print(myGraph.to_grok_prompt())
+    node1 = Node(id="1844811140943183900", text="I absolutely hate the color blue.", url="https://twitter.com/twitter/status/1844811140943183900")
+    node2 = Node(id="1844811140943183901", text="Blue is a terrible color.", url="https://twitter.com/twitter/status/1844811140943183901")
+    node3 = Node(id="1844811140943183902", text="I love blue color.", url="https://twitter.com/twitter/status/1844811140943183902")
+    myGraph.add_node(node1)
+    myGraph.add_node(node2)
+    myGraph.add_node(node3)
+    myGraph.generate_links()
+    # print(myGraph.to_grok_prompt())
