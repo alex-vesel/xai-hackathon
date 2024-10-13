@@ -28,7 +28,7 @@
     padding: 10px;
     overflow-y: auto;
     font-weight: bold; /* Make font bold */
-    font-size: 11px; /* Make font size smaller */
+    font-size: 15px; /* Make font size smaller */
 }
 .chat-message {
     margin-bottom: 10px;
@@ -36,7 +36,7 @@
     border-radius: 5px;
     max-width: 80%;
     font-weight: bold; /* Make font bold */
-    font-size: 11px; /* Make font size smaller */
+    font-size: 15px; /* Make font size smaller */
 }
 .chat-message.user {
     background-color: #000000;
@@ -48,7 +48,7 @@
     border-radius: 10px; /* Added border-radius */
     width: fit-content;
     font-weight: bold; /* Make font bold */
-    font-size: 11px; /* Make font size smaller */
+    font-size: 15px; /* Make font size smaller */
 }
 
 .chat-message.llm {
@@ -62,7 +62,7 @@
     border-radius: 10px; /* Added border-radius */
     width: fit-content;
     font-weight: bold; /* Make font bold */
-    font-size: 11px; /* Make font size smaller */
+    font-size: 15px; /* Make font size smaller */
 }
 
 .chat-input {
