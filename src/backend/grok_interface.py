@@ -211,7 +211,7 @@ class GrokInterface():
     
 
     def synthesize(self, user, graph):
-        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please phrase the ideas as a message to the user in a fun, humourus way! Please call the provided function to add your response.\n"
+        input = "Now it is time to do your task of creating new ideas based on the user and the graph. Please phrase the ideas as a message to the user in a fun, humourus way! Please call the provided function to add your response. Keep the messages short and use newlines!\n"
         input += str(user)
         input += graph.to_grok_prompt()
         task_functions = [functions["synthesize"]]
@@ -225,7 +225,7 @@ class GrokInterface():
 
     def chat_with_graph(self, user_input, user, graph):
         # Chat with the graph
-        input = "Please respond to the user's query in a fun, humourus way referencing the tweets in the graph provided IF NECESSARY. If the user just asks a question that does not require the graph you can just respond directly.\n"
+        input = "Please respond to the user's query in a fun, humourus way referencing the tweets in the graph provided IF NECESSARY. If the user just asks a question that does not require the graph you can just respond directly. Keep the messages short and use newlines!\n"
         input += str(user)
         input += graph.to_grok_prompt()
         input += f"User query: {user_input}\n"
