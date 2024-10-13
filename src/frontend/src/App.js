@@ -75,8 +75,8 @@ function App() {
       <h1 style={{ color: 'white' }}>A Hitchhiker's Guide to 𝕏</h1>
       <TweetInput setTweetId={setTweetId} setGraphData={setGraphData} /> {/* Use the new component */}
       <div style={{ display: 'flex'}}>
-        <div style={{ flex: 3 , border: '2px solid white', padding: '10px'}}>
-          <ForceGraph width={800} height={620} graphData={graphData} />
+        <div style={{ flex: 3 , padding: '10px'}}>
+          <ForceGraph width={800} height={700} graphData={graphData} />
         </div>
         <div style={{ flex: 1 }}>
           <ChatSidebar />
