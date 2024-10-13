@@ -5,7 +5,7 @@ import json
 import requests
 
 
-def get_embedding(api_key, message):
+def get_embedding(api_key, message, dimensions=512):
     url = "https://api.x.ai/v1/embeddings"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -13,7 +13,8 @@ def get_embedding(api_key, message):
     }
     data = {
         "input": message,
-        "model": "v2"
+        "model": "v2",
+        "dimensions": dimensions
     }
 
     with requests.post(url, headers=headers, json=data) as response:
