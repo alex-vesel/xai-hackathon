@@ -39,7 +39,7 @@ class Orchestrator():
         output = self.grok.get_user_summary(recent_tweets)
         self.user = User(username, output['user_summary'], output['user_tags'])
 
-    def init_user_graph(self, username, node_limit=20):
+    def init_user_graph(self, username, node_limit=10):
         self.grok.clear_chat()
         if self.user is None:
             self.build_user_description(username)

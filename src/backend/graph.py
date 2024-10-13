@@ -34,7 +34,7 @@ class Graph():
         # get node html first
         self.nodes.append(node)
     
-    def generate_links(self, similarity_threshold = 0.9):
+    def generate_links(self, similarity_threshold = 0.75):
         api_key = os.environ.get("XAI_API_KEY")
         embeds = []
         for node in self.nodes:
