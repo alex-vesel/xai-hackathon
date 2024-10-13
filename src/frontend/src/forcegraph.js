@@ -292,9 +292,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     const tweetIdMatch = d.url.match(/status\/(\d+)/);
     const tweetId = tweetIdMatch ? tweetIdMatch[1] : null;
 
-    if (tweetId) {
-      
-    }
+    
   }
 
   // Reset function
