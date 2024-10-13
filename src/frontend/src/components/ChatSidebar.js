@@ -77,8 +77,8 @@ const ChatSidebar = () => {
       console.log(tweetIds);
 
       // Dispatch a custom event with the tweet IDs
-      const event = new CustomEvent('highlightNodes', { detail: { tweetIds } });
-      window.dispatchEvent(event);
+      // const event = new CustomEvent('highlightNodes', { detail: { tweetIds } });
+      // window.dispatchEvent(event);
 
     } catch (error) {
       console.error('Error fetching synthesis response:', error);
