@@ -55,8 +55,16 @@ const ChatSidebar = () => {
       const data = await response.json();
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: data, sender: 'llm' },
+        { text: "Well do I have some new ideas for you!", sender: 'llm' },
       ]);
+      // iterate over the data and add each response to the messages
+      // data is a list of dicts with key "idea"
+      for (let i = 0; i < data.length; i++) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: data[i].idea, sender: 'llm' },
+        ]);
+      }
     } catch (error) {
       console.error('Error fetching synthesis response:', error);
       setMessages((prevMessages) => [
