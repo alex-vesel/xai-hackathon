@@ -1,6 +1,7 @@
 from graph import Graph
 from grok_interface import GrokInterface
 from x_api import XAPI
+import copy
 
 class User:
     def __init__(self, username=None, description=None, tags=None):
@@ -21,6 +22,7 @@ class Orchestrator():
         self.similar_tweets_grok = GrokInterface()
         self.x_api = XAPI()
         self.user = None
+        self.saved_chat = copy.deepcopy(self.grok.conversation)
 
     def clear(self):
         self.graph = Graph()
@@ -61,6 +63,16 @@ class Orchestrator():
     def synthesize(self):
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
+        return output
+    
+    def chat_with_graph(self, input):
+        self.grok.clear_chat()
+        self.grok.conversation = copy.deepcopy(self.saved_chat)
+        output = self.grok.chat_with_graph(input, self.user, self.graph)
+        self.saved_chat.append(self.grok.format_user_message(input))
+        self.saved_chat.append(self.grok.format_system_message(output))
+        print(output)
+        print("\n\n")
         return output
 
     def get_similar_tweets_from_id(self, tweet_id, max_results=10):
@@ -115,6 +127,7 @@ class Orchestrator():
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
-    orchestrator.explore()
+    orchestrator.chat_with_graph("Tell me the most exciting things happening on X right now!")
+    orchestrator.chat_with_graph("What were we just talking about? Summarize in one word.")
     # orchestrator.synthesize()
     # print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))

@@ -29,7 +29,6 @@ def synthesize(new_ideas, source_ids):
         })
     return output
 
-
 def extract_node_ids_from_text(text):
     # extract all 19 digit numbers from text
     return re.findall(r'\b\d{19}\b', text)
@@ -131,6 +130,11 @@ class GrokInterface():
     def clear_chat(self):
         self.conversation =  [{"role": "system", "content": GROK_SYSTEM_PROMPT}]
 
+    def format_user_message(self, input):
+        return {"role": "user", "content": input}
+    
+    def format_system_message(self, input):
+        return {"role": "system", "content": input}
 
     def add_user_message(self, input):
         self.conversation.append({"role": "user", "content": input})
@@ -146,7 +150,7 @@ class GrokInterface():
 
     def create_chat_completion(self, input, tools=None, add_system_message=True):
         if tools is not None:
-            input += "\nA reminder of your tools:\n"
+            input += "\nA reminder to use the tool that is provided!:\n"
             for tool in tools:
                 input += f"Tool: {tool['function']}\n"
         self.add_user_message(input)
@@ -217,6 +221,16 @@ class GrokInterface():
             if tool['function'] == "synthesize":
                 return tool['output']
         return None
+    
+
+    def chat_with_graph(self, user_input, user, graph):
+        # Chat with the graph
+        input = "Please respond to the user's query in a fun, humourus way referencing the tweets in the graph provided IF NECESSARY. If the user just asks a question that does not require the graph you can just respond directly.\n"
+        input += str(user)
+        input += graph.to_grok_prompt()
+        input += f"User query: {user_input}\n"
+        response = self.create_chat_completion(input)
+        return response['text']
         
 
 
