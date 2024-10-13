@@ -3,6 +3,9 @@ Let Grok be your guide to the thriving universe of X!
 
 Built for the xAI Hackathon 10/12/2024 @ Pioneer Building SF.
 
+<img width="512" alt="Screen Shot 2024-10-13 at 2 51 12 PM" src="https://github.com/user-attachments/assets/01de3917-a684-4b63-99fb-a849efaf6b10">
+
+
 ## Instructions
 In your shell environment, set the following environment variables:
 ```
