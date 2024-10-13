@@ -361,10 +361,28 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
 
         if (tweetId) {
           const response = await axios.get(`http://0.0.0.0:5001/add_similar_tweets?tweet_id=${tweetId}`);
-          const newNodes = response.data;
-          const updatedNodes = [...graphState.nodes, ...newNodes.nodes];
-          const updatedLinks = [...graphState.links, ...newNodes.links];
+          const allNewNodes = response.data;
+          const newNodes = allNewNodes.slice(0, 10); // Limit to 4 new nodes
 
+          const updatedNodes = [...graphState.nodes, ...newNodes];
+          // Add random edges between new nodes and existing nodes
+          const existingNodeIds = graphState.nodes.map(node => node.id);
+          const newNodeIds = newNodes.map(node => node.id);
+          const newLinks = [];
+
+          newNodeIds.forEach(newNodeId => {
+            const numberOfLinks = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
+            for (let i = 0; i < numberOfLinks; i++) {
+              const randomExistingNodeId = existingNodeIds[Math.floor(Math.random() * existingNodeIds.length)];
+              newLinks.push({
+                source: newNodeId,
+                target: randomExistingNodeId,
+                weight: Math.random() // Random weight between 0 and 1
+              });
+            }
+          });
+
+          const updatedLinks = [...graphState.links, ...newLinks];
           setGraphState({ nodes: updatedNodes, links: updatedLinks });
         }
       } catch (error) {
