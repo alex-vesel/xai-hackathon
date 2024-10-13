@@ -110,7 +110,7 @@ const ChatSidebar = () => {
         />
         <button onClick={handleSend}>Send</button>
         <button onClick={handleSynthesize}>
-          <img src="synthesize-icon.png" alt="Synthesize" />
+          <img className="synthesize-icon" src="https://cdn.icon-icons.com/icons2/2622/PNG/512/scifi_hitchhikers_guide_to_the_galaxy_icon_157473.png" alt="Synthesize" />
         </button>
       </div>
     </div>
