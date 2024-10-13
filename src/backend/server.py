@@ -47,6 +47,14 @@ def add_similar_tweets():
     tweets = orchestrator.get_similar_tweets_from_id(request.args.get('tweet_id'))
     return jsonify_tweet_list(tweets)
 
+@app.route('/chat_with_graph')
+def chat_with_graph():
+    output = orchestrator.chat_with_graph(request.args.get('input'))
+    output = {"response": output}
+    return jsonify(output)
+
+
+
 
 if __name__ == '__main__':
     app.run()
