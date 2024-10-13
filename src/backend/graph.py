@@ -56,7 +56,8 @@ class Graph():
                 similarity = np.dot(embedding_i, embedding_j) / (np.linalg.norm(embedding_i) * np.linalg.norm(embedding_j))
                 
                 # If similarity is above a threshold, create a link
-                if similarity > similarity_threshold:  # Adjust threshold as needed
+                if np.random.random() < 0.15:
+                # if similarity > similarity_threshold:  # Adjust threshold as needed
                     self.links.append({
                         'source': self.nodes[i].id,
                         'target': self.nodes[j].id,
