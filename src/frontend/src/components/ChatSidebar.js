@@ -27,9 +27,16 @@ const ChatSidebar = () => {
         });
 
         const data = await response.json();
+        // set response so if it sees **text** it will bold
+        let responseText = data.response;
+        if (responseText.includes("**")) {
+          responseText = responseText.replace(/\*\*/g, "\n");
+          responseText = responseText.replace(/\*\*/g, "\n");
+        }
+        console.log('response:', responseText);
         setMessages((prevMessages) => [
           ...prevMessages,
-          { text: data.response, sender: 'llm' },
+          { text: responseText, sender: 'llm' },
         ]);
       } catch (error) {
         console.error('Error fetching LLM response:', error);
