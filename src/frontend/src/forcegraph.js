@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
+import { addSimilarNodes } from './endpoints/AddNodes';
 import './ForceGraph.css';
 
 const ForceGraph = ({ width = 928, height = 600, graphData }) => {
@@ -282,6 +283,13 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
         zoomRef.current.transform,
         d3.zoomIdentity.translate(width / 2, height / 2).scale(scale).translate(-x, -y)
       );
+    // Get tweet ID from the clicked node
+    const tweetIdMatch = d.url.match(/status\/(\d+)/);
+    const tweetId = tweetIdMatch ? tweetIdMatch[1] : null;
+
+    if (tweetId) {
+      
+    }
   }
 
   // Backtrack function
