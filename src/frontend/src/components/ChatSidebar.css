@@ -57,7 +57,8 @@
     align-self: flex-start;
     text-align: left;
     margin-right: auto;
-    border: 1px solid #ff4500; /* Given border color for LLM messages */
+    /* make border a cool slimy green that's not too bright */
+    border: 1px solid #00ff00; /* Given border color for LLM messages */
     border-radius: 10px; /* Added border-radius */
     width: fit-content;
     font-weight: bold; /* Make font bold */
