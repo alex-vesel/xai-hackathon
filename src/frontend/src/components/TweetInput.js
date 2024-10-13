@@ -21,7 +21,7 @@ function TweetInput({ setTweetId }) {
         'Content-Type': 'application/json',
       };
       console.log("GETTING DATA");
-      const response = await axios.get(`http://0.0.0.0:5001/tweets_from_category?category=${inputValue}`, {
+      const response = await axios.get(`http://0.0.0.0:5001/init_user_graph?username=${inputValue}`, {
         params: headers,
       });
       const graph = response.data;
