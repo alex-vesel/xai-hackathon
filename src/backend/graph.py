@@ -38,7 +38,7 @@ class Graph():
         api_key = os.environ.get("XAI_API_KEY")
         embeds = []
         for node in self.nodes:
-            embeds.append(np.array(xai_embed_api.get_embedding(api_key, node.text)))
+            embeds.append(np.array(xai_embed_api.get_embedding(node.text)))
 
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
