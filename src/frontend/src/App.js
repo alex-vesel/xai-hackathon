@@ -1,6 +1,7 @@
 import './App.css';
 import ForceGraph from './forcegraph';
 import './index.css';
+import { useEffect } from 'react';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
 import ChatSidebar from './components/ChatSidebar';
 import { useState } from 'react';
@@ -8,14 +9,20 @@ import TweetInput from './components/TweetInput'; // Import the new component
 
 function App() {
   const [tweetId, setTweetId] = useState('');
+  const [graphData, setGraphData] = useState({ nodes: [], links: [] });
+
+  useEffect(() => {
+    // Save graph data to localStorage whenever it changes
+    localStorage.setItem('graphData', JSON.stringify(graphData));
+  }, [graphData]);
 
   return (
     <div className="App">
-      <TweetInput setTweetId={setTweetId} /> {/* Use the new component */}
+      <TweetInput setTweetId={setTweetId} setGraphData={setGraphData} /> {/* Use the new component */}
       <h1 style={{ color: 'white' }}>A Hitchhiker's Guide to X</h1>
       <div style={{ display: 'flex'}}>
         <div style={{ flex: 3 , border: '2px solid white', padding: '10px'}}>
-          <ForceGraph width={800} height={620} />
+          <ForceGraph width={800} height={620} graphData={graphData} />
         </div>
         <div style={{ flex: 1 }}>
           <ChatSidebar />

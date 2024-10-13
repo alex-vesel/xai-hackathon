@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-function TweetInput({ setTweetId }) {
+function TweetInput({ setTweetId, setGraphData }) {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (e) => {
@@ -26,6 +26,7 @@ function TweetInput({ setTweetId }) {
       });
       const graph = response.data;
       console.log(graph);
+      setGraphData(graph);
     } catch (error) {
       console.error('Error initializing user graph:', error);
     }

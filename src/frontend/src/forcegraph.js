@@ -1,10 +1,9 @@
 // src/ForceGraph.js
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import data from './data.json';
 import useScript from './useScript';
 
-const ForceGraph = ({ width = 928, height = 600 }) => {
+const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   const svgRef = useRef();
 
   // Define refs
@@ -26,14 +25,18 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
   useScript('https://platform.twitter.com/widgets.js');
 
   useEffect(() => {
-    // Remove the script loading code since we're using useScript now
+    if (!graphData.nodes.length && !graphData.links.length) {
+      // If graphData is empty, clear the SVG and return
+      d3.select(svgRef.current).selectAll("*").remove();
+      return;
+    }
 
     // Initialize color scale
     colorRef.current = d3.scaleOrdinal(d3.schemeCategory10);
 
     // Initialize nodes and links
-    nodesRef.current = data.nodes.map(d => ({ ...d }));
-    linksRef.current = data.links.map(d => ({ ...d }));
+    nodesRef.current = graphData.nodes.map(d => ({ ...d }));
+    linksRef.current = graphData.links.map(d => ({ ...d }));
 
     // Select and configure the SVG element
     const svg = d3.select(svgRef.current)
@@ -95,7 +98,7 @@ const ForceGraph = ({ width = 928, height = 600 }) => {
     // Clean up on unmount
     return () => simulationRef.current.stop();
 
-  }, [width, height]);
+  }, [width, height, graphData]);
 
   // Define functions outside useEffect
 
