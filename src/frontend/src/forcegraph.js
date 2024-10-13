@@ -1,5 +1,3 @@
-
- 
 // src/ForceGraph.js
 import React, { useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
@@ -178,7 +176,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       )
       .on("mouseover", showTooltip)
       .on("mouseout", hideTooltip)
-      .on("click", clickedNode);
+      .on("dblclick", doubleClickedNode); // Add double-click event handler
 
     nodeEnter.append("title").text(d => d.id);
 
@@ -248,6 +246,42 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     // Update state and set focusNode
     setGraphState({ nodes: updatedNodes, links: updatedLinks });
     setFocusNode(d);
+  }
+
+  // Add this new function for handling double-clicks
+  function doubleClickedNode(event, d) {
+    event.stopPropagation();
+
+    const svg = svgSelectionRef.current;
+    const scale = 2; // Adjust the scale as needed
+    const x = d.x;
+    const y = d.y;
+
+    // Highlight the node and its neighbors
+    const connectedNodes = new Set();
+    connectedNodes.add(d.id);
+
+    linksRef.current.forEach(l => {
+      if (l.source.id === d.id) {
+        connectedNodes.add(l.target.id);
+      } else if (l.target.id === d.id) {
+        connectedNodes.add(l.source.id);
+      }
+    });
+
+    // Change color of the node and its neighbors
+    nodeSelectionRef.current
+      .style("fill", n => connectedNodes.has(n.id) ? "orange" : colorRef.current(n.group || 1));
+
+    linkSelectionRef.current
+      .style("stroke", l => (l.source.id === d.id || l.target.id === d.id) ? "orange" : "#999");
+
+    svg.transition()
+      .duration(750)
+      .call(
+        zoomRef.current.transform,
+        d3.zoomIdentity.translate(width / 2, height / 2).scale(scale).translate(-x, -y)
+      );
   }
 
   // Backtrack function
