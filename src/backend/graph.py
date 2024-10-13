@@ -37,8 +37,9 @@ class Graph():
     def generate_links(self, similarity_threshold = 0.76):
         api_key = os.environ.get("XAI_API_KEY")
         embeds = []
-        for node in self.nodes:
-            embeds.append(np.array(xai_embed_api.get_embedding(node.text)))
+        if not DEBUG:
+            for node in self.nodes:
+                embeds.append(np.array(xai_embed_api.get_embedding(node.text)))
 
         for i in range(len(self.nodes)):
             for j in range(i+1, len(self.nodes)):
@@ -55,7 +56,8 @@ class Graph():
                 similarity = np.dot(embedding_i, embedding_j) / (np.linalg.norm(embedding_i) * np.linalg.norm(embedding_j))
                 
                 # If similarity is above a threshold, create a link
-                if similarity > similarity_threshold:  # Adjust threshold as needed
+                if np.random.random() < 0.15:
+                # if similarity > similarity_threshold:  # Adjust threshold as needed
                     self.links.append({
                         'source': self.nodes[i].id,
                         'target': self.nodes[j].id,
