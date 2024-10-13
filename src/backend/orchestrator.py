@@ -3,6 +3,8 @@ from grok_interface import GrokInterface
 from x_api import XAPI
 import copy
 
+tweet_id_to_url = lambda tweet_id: f"https://twitter.com/twitter/status/{tweet_id}"
+
 class User:
     def __init__(self, username=None, description=None, tags=None):
         self.username = username
@@ -69,11 +71,17 @@ class Orchestrator():
     def synthesize(self):
         self.grok.clear_chat()
         output = self.grok.synthesize(self.user, self.graph)
+        while output is None:
+            output = self.grok.synthesize(self.user, self.graph)
         self.saved_chat.append(self.grok.format_user_message("Please synthesize some new ideas for me!"))
         output_str = ""
         for idea in output:
             output_str += idea['idea'] + "\n\n"
         self.saved_chat.append(self.grok.format_system_message(output_str))
+        
+        for out in output:
+            out['source_id'] = tweet_id_to_url(out['source_id'])
+
         return output
     
     def chat_with_graph(self, input):
@@ -138,8 +146,8 @@ class Orchestrator():
 if __name__ == "__main__":
     orchestrator = Orchestrator()
     orchestrator.init_user_graph("elonmusk")
-    # orchestrator.synthesize()
-    print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
+    orchestrator.synthesize()
+    # print(orchestrator.get_similar_tweets_from_id("1845200940468416998"))
     # orchestrator.chat_with_graph("Tell me the most exciting things happening on X right now!")
     # orchestrator.chat_with_graph("What were we just talking about? Summarize in one word.")
     # orchestrator.synthesize()
