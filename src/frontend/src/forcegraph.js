@@ -23,6 +23,7 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
   const [lastState, setLastState] = useState(null); // For backtracking
   const nodeIdCounter = useRef(0); // Counter for unique node IDs
   const [focusNode, setFocusNode] = useState(null); // Node to focus on after updates
+  const [selectedNode, setSelectedNode] = useState(null); // Node selected for adding similar nodes
 
   // Update graphState when graphData prop changes
   useEffect(() => {
@@ -177,7 +178,8 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
       )
       .on("mouseover", showTooltip)
       .on("mouseout", hideTooltip)
-      .on("dblclick", doubleClickedNode); // Add double-click event handler
+      .on("dblclick", doubleClickedNode) // Add double-click event handler
+      .on("click", (event, d) => setSelectedNode(d)); // Add click event handler to select node
 
     nodeEnter.append("title").text(d => d.id);
 
@@ -295,6 +297,20 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     
   }
 
+  // New function to highlight nodes by ID
+  function highlightNodesById(nodeIds) {
+    const svg = svgSelectionRef.current;
+
+    // Highlight the specified nodes and dim others
+    nodeSelectionRef.current
+      .style("fill", n => nodeIds.has(n.id) ? "orange" : "gray")
+      .style("opacity", n => nodeIds.has(n.id) ? 1 : 0.1); // Dim non-highlighted nodes
+
+    linkSelectionRef.current
+      .style("stroke", l => (nodeIds.has(l.source.id) && nodeIds.has(l.target.id)) ? "orange" : "gray")
+      .style("opacity", l => (nodeIds.has(l.source.id) && nodeIds.has(l.target.id)) ? 1 : 0.1); // Dim non-highlighted links
+  }
+
   // Reset function
   function handleReset() {
     const svg = d3.select(svgRef.current);
@@ -321,6 +337,41 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
     setFocusNode(null);
   }
 
+  // Function to handle adding similar nodes
+  async function handleAddSimilarNodes() {
+    if (selectedNode) {
+      try {
+        const tweetIdMatch = selectedNode.url.match(/status\/(\d+)/);
+        const tweetId = tweetIdMatch ? tweetIdMatch[1] : null;
+
+        if (tweetId) {
+          const newNodes = await addSimilarNodes(tweetId);
+          const updatedNodes = [...graphState.nodes, ...newNodes.nodes];
+          const updatedLinks = [...graphState.links, ...newNodes.links];
+
+          setGraphState({ nodes: updatedNodes, links: updatedLinks });
+        }
+      } catch (error) {
+        console.error('Error adding similar nodes:', error);
+      }
+    }
+  }
+
+  useEffect(() => {
+    const handleHighlightNodes = (event) => {
+      const { tweetIds } = event.detail;
+      highlightNodesById(new Set(tweetIds));
+    };
+
+    // Add event listener for custom event
+    window.addEventListener('highlightNodes', handleHighlightNodes);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('highlightNodes', handleHighlightNodes);
+    };
+  }, []);
+
   return (
     <div style={{ position: 'relative', width: `${width}px`, height: `${height}px` }}>
       <button
@@ -328,6 +379,12 @@ const ForceGraph = ({ width = 928, height = 600, graphData }) => {
         style={{ position: 'absolute', zIndex: 1 }}
       >
         &#8592; {/* Backwards arrow */}
+      </button>
+      <button
+        onClick={handleAddSimilarNodes}
+        style={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}
+      >
+        +
       </button>
       <svg ref={svgRef}></svg>
       {tooltip.visible && (
