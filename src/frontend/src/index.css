@@ -6,9 +6,34 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: black;
+  position: relative; /* Ensure the body is positioned for absolute children */
+  overflow: hidden; /* Prevent scrollbars from appearing */
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background-color: white;
+  pointer-events: none; /* Prevent mouse events on particles */
+  width: 4px; /* Size of the particle */
+  height: 4px; /* Size of the particle */
+}
+
+/* Add this section for the background image */
+body::before {
+  content: '';
+  position: absolute; /* Use absolute positioning */
+  top: 0;
+  left: 0;
+  width: 100px; /* Set width to desired size */
+  height: 100px; /* Set height to desired size */
+  background-image: url('Screenshot 2024-10-12 193026.png'); /* Updated path */
+  background-size: contain; /* Ensure the image fits within the specified dimensions */
+  background-repeat: no-repeat; /* Prevent repeating */
+  z-index: -1; /* Ensure it stays behind other content */
 }
