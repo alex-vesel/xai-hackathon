@@ -3,7 +3,8 @@ Let Grok be your guide to the thriving universe of X!
 
 Built for the xAI Hackathon 10/12/2024 @ Pioneer Building SF.
 
-![image](https://github.com/user-attachments/assets/25324325-7b5e-408f-8474-2b21a53c9561)
+![Hitchhicker's Guide to X Demo](https://github.com/user-attachments/assets/fcbad57e-1ab2-4dd7-a1f1-f64a7f7a7a88)
+
 
 <img width="512" alt="Screen Shot 2024-10-13 at 2 51 12 PM" src="https://github.com/user-attachments/assets/01de3917-a684-4b63-99fb-a849efaf6b10">
 
